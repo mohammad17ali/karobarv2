@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import  'package:lucide_icons_flutter/lucide_icons.dart';
 import '../constants/constants.dart';
+import 'dashboard.dart';
 
 class MenuManagementPage extends StatefulWidget {
   const MenuManagementPage({Key? key}) : super(key: key);
@@ -70,13 +71,10 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                   LucideIcons.plus,
                       () => Navigator.pushNamed(context, 'AddMenuManual'),
                 ),
-
                 const Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Divider(),
                 ),
-
-                // Menu List
                 Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.all(8),
@@ -84,6 +82,31 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                     itemBuilder: (context, index) {
                       return _buildMenuButton(menus[index]);
                     },
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DashboardPage(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.arrow_circle_left_outlined),
+                    label: const Text('Go to Dashboard'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.white,
+                      foregroundColor: AppColors.primary,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                   ),
                 ),
               ],
