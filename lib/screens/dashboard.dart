@@ -27,7 +27,7 @@ class _DashboardPageState extends State<DashboardPage> {
       appBar: AppBar(
         title: Text(
           "The Zaika Restaurant",
-          style: AppTextStyles.titleLarge.copyWith(color: Colors.white),
+          style: AppTextStyles.titleLarge(context).copyWith(color: Colors.white),
         ),
         backgroundColor: AppColors.primary,
         actions: [

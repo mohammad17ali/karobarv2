@@ -34,7 +34,7 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: const Text('The Zaika Restaurant', style: AppTextStyles.titleLarge),
+        title: Text('The Zaika Restaurant', style: AppTextStyles.titleLarge(context)),
         elevation: 0,
       ),
       body: Row(
@@ -85,26 +85,29 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DashboardPage(),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DashboardPage(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.arrow_circle_left_outlined),
+                      label: const Text('Go to Dashboard'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.white,
+                        foregroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.arrow_circle_left_outlined),
-                    label: const Text('Go to Dashboard'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.white,
-                      foregroundColor: AppColors.primary,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                   ),
@@ -196,13 +199,13 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                                     children: [
                                       Text(
                                         items[itemIndex],
-                                        style: AppTextStyles.cardTitle,
+                                        style: AppTextStyles.cardTitle(context),
                                         textAlign: TextAlign.center,
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
                                         '₹299',
-                                        style: AppTextStyles.priceText,
+                                        style: AppTextStyles.priceText(context),
                                       ),
                                     ],
                                   ),
@@ -227,7 +230,7 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
   Widget _buildSidebarButton(String text, IconData icon, VoidCallback onTap) {
     return Container(
       padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.all(10),
+      margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.deepPurple[700],
         borderRadius: BorderRadius.circular(12),
@@ -237,7 +240,7 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
         children: [
           Icon(icon, color: AppColors.white),
           const SizedBox(width: 12),
-          Text(text, style: AppTextStyles.buttonText),
+          Text(text, style: AppTextStyles.buttonText(context)),
         ],
       ),
 
