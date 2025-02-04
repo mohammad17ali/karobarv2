@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/fetchItems.dart';
 import '../components/sidebar.dart';
 import '../constants/constants.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+//import 'ledger.dart';
+import 'dashboard.dart';
+import 'menus.dart';
 
 
 class RestaurantHomePage extends StatelessWidget {
@@ -37,6 +39,7 @@ class _HomePageState extends State<HomePage> {
   String _selectedCategory = 'All';
   List<Map<String, dynamic>> _foodItems = [];
   bool _isLoading = true;
+  int _toggleIndex = 0;
 
   static const List<String> _categories = [
     "All",
@@ -70,7 +73,7 @@ class _HomePageState extends State<HomePage> {
       : _foodItems.where((item) => item['category'].contains(_selectedCategory)).toList();
 
   void _handleItemTap(Map<String, dynamic> item) {
-    final itemID = item['ItemID'];
+    final itemID = item['itemID'];
     setState(() {
       if (!_cart.containsKey(itemID)) {
         _cart[itemID] = 1;
@@ -134,7 +137,7 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.only(right: 16.0),
         child: Image.asset(
           'lib/assets/logoR.png',
-          height: 40.h,
+          height: 40,
         ),
       ),
     ],
@@ -153,7 +156,7 @@ class _HomePageState extends State<HomePage> {
   );
 
   Widget _buildCategoryBar() => Container(
-    height: 50.h,
+    height: 50,
     color: AppColors.primary,
     child: ListView(
       scrollDirection: Axis.horizontal,
@@ -171,7 +174,7 @@ class _HomePageState extends State<HomePage> {
             : AppColors.catNotSelectedBG,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.h),
+          borderRadius: BorderRadius.circular(30),
         ),
       ),
       child: Text(
@@ -193,7 +196,7 @@ class _HomePageState extends State<HomePage> {
     itemCount: _filteredItems.length,
     itemBuilder: (context, index) {
       final item = _filteredItems[index];
-      final itemID = item['ItemID'];
+      final itemID = item['itemID'];
       final isAdded = _cart.containsKey(itemID);
       final quantity = _cart[itemID] ?? 0;
 
@@ -235,17 +238,17 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     item['name'],
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      color: isAdded ? Colors.white : AppColors.primaryDark,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
-                      color: isAdded ? AppColors.white : Colors.deepPurple
                     ),
                   ),
-                  SizedBox(height: 4.h),
+                  const SizedBox(height: 4),
                   Text(
                     "${item['price']} Rs.",
                     style: TextStyle(
-                        fontSize: 14.sp,
-                        color: isAdded ? AppColors.white : Colors.green
+                      color: isAdded ? Colors.white : Colors.green,
+                      fontSize: 12.sp,
                     ),
                   ),
                 ],
@@ -271,7 +274,7 @@ class _HomePageState extends State<HomePage> {
           right: 10,
           bottom: 10,
           child: GestureDetector(
-            onTap: () => _handleItemRemove(item['ItemID'], quantity),
+            onTap: () => _handleItemRemove(item['itemID'], quantity),
             child: CircleAvatar(
               radius: 24,
               backgroundColor: Colors.white,

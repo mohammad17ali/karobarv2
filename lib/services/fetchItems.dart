@@ -25,7 +25,7 @@ class FetchItems {
           final fields = record['fields'];
 
           foodItems.add({
-            'ItemID': fields['Product_ID'] ?? '',
+            'itemID': fields['Product_ID'] ?? '',
             'name': fields['Name'] ?? '',
             'price': fields['Price'] ?? 0,
             'image': fields['Image'] != null && fields['Image'].isNotEmpty

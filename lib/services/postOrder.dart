@@ -16,6 +16,9 @@ class OrderService {
             "OrderNum": orderNum,
             "User_ID": userId,
             "Outlet_ID": outletId,
+            "Product_ID": item['Product_ID'],
+            "ItemName": item['name'],
+            "Quantity": item['quantity'],
             "Amount": item['quantity'] * item['price'],
             "Status": "Active",
           }

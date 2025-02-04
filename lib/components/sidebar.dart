@@ -84,7 +84,14 @@ class _SidebarState extends State<Sidebar> {
 
 
   List<Map<String, dynamic>> get _activeOrders =>
-      _orders.where((order) => order['Status'] == 'Active').toList();
+      _orders.where((order) => order['Status'] == 'Active').map((order) {
+        return {
+          'OrderNum': order['OrderNum'],
+          'Amount': order['Amount'],
+          'ItemNames': order['ItemNames'].join(', '), // Display as comma-separated string
+        };
+      }).toList();
+
   String selectedValue = 'Monday Menu';
   final List<String> dropdownItems = ["Monday Menu", "Tuesday Menu", "Wednesday Menu"];
   void onButtonPressed() {
@@ -112,10 +119,10 @@ class _SidebarState extends State<Sidebar> {
         children: [
           //_buildLogo(),
           SizedBox(
-              height: 16.h
+              height: 5.h
           ),
           _buildActiveOrdersSection(context),
-          SizedBox(height: 15.h),
+          SizedBox(height: 10.h),
           Expanded(
             child: widget.cartItems.isEmpty
                 ? _buildManageSection(context)
@@ -134,14 +141,14 @@ class _SidebarState extends State<Sidebar> {
   Widget _buildManageSection(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      SizedBox(height: 10.h),
+      SizedBox(height: 5.h),
       Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(10),
         height: MediaQuery.of(context).size.height * 0.2,
         decoration: BoxDecoration(
           color: Colors.deepPurple[700],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.primaryLight, width: 1),
+          borderRadius: BorderRadius.circular(12.h),
+          border: Border.all(color: AppColors.primaryLight, width: 1.h),
           image: const DecorationImage(
             image: AssetImage('lib/assets/contB.png'),
             fit: BoxFit.cover,
@@ -159,7 +166,7 @@ class _SidebarState extends State<Sidebar> {
                 Expanded(
                   flex: 3,
                   child: SizedBox(
-                    height: 48.h,
+                    height: 40.h,
                     child: DropdownButtonFormField<String>(
                       value: selectedValue,
                       decoration: InputDecoration(
@@ -167,7 +174,7 @@ class _SidebarState extends State<Sidebar> {
                         fillColor: Colors.white,
                         contentPadding: EdgeInsets.symmetric(horizontal: 16.h),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(10.h),
                           borderSide: BorderSide.none,
                         ),
                       ),
@@ -194,14 +201,14 @@ class _SidebarState extends State<Sidebar> {
                 SizedBox(width: 8.w),
                 // Action Button
                 SizedBox(
-                  height: 48.h,
+                  height: 40.h,
                   child: ElevatedButton(
                     onPressed: onButtonPressed,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.accent,
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.h),
                       ),
                     ),
                     child: Text("Submit", style: TextStyle(fontSize: 14.sp,color: Colors.white)),
@@ -209,11 +216,11 @@ class _SidebarState extends State<Sidebar> {
                 ),
               ],
             ),
-            const Spacer(),
+            //const Spacer(),
           ],
         ),
       ),
-      SizedBox(height: 24.h),
+      SizedBox(height: 12.h),
       SizedBox(
         width: double.infinity,
         height: 40.h,
@@ -233,12 +240,12 @@ class _SidebarState extends State<Sidebar> {
             foregroundColor: AppColors.primary,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8.h),
             ),
           ),
         ),
       ),
-      SizedBox(height: 24.h),
+      SizedBox(height: 12.h),
       SizedBox(
         width: double.infinity,
         height: 40.h,
@@ -247,7 +254,7 @@ class _SidebarState extends State<Sidebar> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DashboardPage(),
+                builder: (context) => const DashboardPage(),
               ),
             );
           },
@@ -258,7 +265,7 @@ class _SidebarState extends State<Sidebar> {
             foregroundColor: AppColors.primary,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8.h),
             ),
           ),
         ),
@@ -275,7 +282,7 @@ class _SidebarState extends State<Sidebar> {
         Text("Active Orders", style: AppTextStyles.titleMedium(context)),
         SizedBox(height: 12.h),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.25,
+          height: (MediaQuery.of(context).size.height * 0.22).h,
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : ActiveOrdersGrid(activeOrders: _activeOrders),

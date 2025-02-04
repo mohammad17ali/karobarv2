@@ -9,7 +9,7 @@ class FetchOrders {
   static const String apiKey = Keys.airtableAPIkey;
 
   static Future<List<Map<String, dynamic>>> fetchOrders() async {
-    List<Map<String, dynamic>> ordersList = [];
+    Map<int, Map<String, dynamic>> aggregatedOrders = {}; // To store unique orders
 
     try {
       final response = await http.get(
@@ -25,21 +25,29 @@ class FetchOrders {
         for (var record in data['records']) {
           final fields = record['fields'];
 
-          ordersList.add({
-            'OrderNum': fields['OrderNum'] ?? 1,
-            'Amount': fields['Amount'] ?? 0,
-            'Status': fields['Status'] ?? 'Active',
-            'OrderID': fields['OrderID'] ?? ['user123'],
-          });
-        }
+          int orderNum = fields['OrderNum'] ?? 1;
+          double amount = (fields['Amount'] ?? 0).toDouble();
+          String status = fields['Status'] ?? 'Active';
+          String itemName = fields['ItemName'] ?? 'Unknown';
 
-      } else {
-        //print('Failed to fetch Orders: ${response.statusCode}');
+          if (aggregatedOrders.containsKey(orderNum)) {
+            aggregatedOrders[orderNum]!['Amount'] += amount;
+            aggregatedOrders[orderNum]!['ItemNames'].add(itemName);
+          } else {
+            aggregatedOrders[orderNum] = {
+              'OrderNum': orderNum,
+              'Amount': amount,
+              'Status': status,
+              'OrderID': fields['OrderID'] ?? ['user123'],
+              'ItemNames': [itemName],
+            };
+          }
+        }
       }
     } catch (e) {
-      //print('Error: $e');
+      //print('Error fetching orders: $e');
     }
 
-    return ordersList;
+    return aggregatedOrders.values.toList();
   }
 }
