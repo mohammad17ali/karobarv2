@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import  'package:lucide_icons_flutter/lucide_icons.dart';
 import '../constants/constants.dart';
 import 'dashboard.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 
 class MenuManagementPage extends StatefulWidget {
   const MenuManagementPage({Key? key}) : super(key: key);
@@ -51,21 +53,11 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
             ),
             child: Column(
               children: [
-                const Text(
-                    'Menu Management',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                  ),
-                ),
-                // Scan Menu Button
                 _buildSidebarButton(
                   'Scan a menu',
                   LucideIcons.qrCode,
                       () => Navigator.pushNamed(context, 'AddMenuScan'),
                 ),
-
-                // Add Menu Button
                 _buildSidebarButton(
                   'Add a menu',
                   LucideIcons.plus,
@@ -84,12 +76,12 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                     },
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: SizedBox(
                     width: double.infinity,
-                    height: 48,
+                    height: 48.h,
                     child: ElevatedButton.icon(
                       onPressed: () {
                         Navigator.push(
@@ -202,7 +194,7 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                                         style: AppTextStyles.cardTitle(context),
                                         textAlign: TextAlign.center,
                                       ),
-                                      const SizedBox(height: 8),
+                                      SizedBox(height: 8.h),
                                       Text(
                                         '₹299',
                                         style: AppTextStyles.priceText(context),
@@ -212,7 +204,7 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                                 );
                               },
                             ),
-                            const SizedBox(height: 24),
+                            SizedBox(height: 24.h),
                           ],
                         );
                       },
@@ -239,7 +231,7 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
       child: Row(
         children: [
           Icon(icon, color: AppColors.white),
-          const SizedBox(width: 12),
+          SizedBox(width: 12.w),
           Text(text, style: AppTextStyles.buttonText(context)),
         ],
       ),

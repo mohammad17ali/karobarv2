@@ -3,9 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../services/fetchItems.dart';
 import '../components/sidebar.dart';
 import '../constants/constants.dart';
-//import 'ledger.dart';
-import 'dashboard.dart';
-import 'menus.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 
 
 class RestaurantHomePage extends StatelessWidget {
@@ -38,7 +37,6 @@ class _HomePageState extends State<HomePage> {
   String _selectedCategory = 'All';
   List<Map<String, dynamic>> _foodItems = [];
   bool _isLoading = true;
-  int _toggleIndex = 0;
 
   static const List<String> _categories = [
     "All",
@@ -136,7 +134,7 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.only(right: 16.0),
         child: Image.asset(
           'lib/assets/logoR.png',
-          height: 40,
+          height: 40.h,
         ),
       ),
     ],
@@ -155,7 +153,7 @@ class _HomePageState extends State<HomePage> {
   );
 
   Widget _buildCategoryBar() => Container(
-    height: 50,
+    height: 50.h,
     color: AppColors.primary,
     child: ListView(
       scrollDirection: Axis.horizontal,
@@ -173,7 +171,7 @@ class _HomePageState extends State<HomePage> {
             : AppColors.catNotSelectedBG,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(30.h),
         ),
       ),
       child: Text(
@@ -236,12 +234,19 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text(
                     item['name'],
-                    style: AppTextStyles.cardTitle(context),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isAdded ? AppColors.white : Colors.deepPurple
+                    ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Text(
                     "${item['price']} Rs.",
-                    style: AppTextStyles.priceText(context),
+                    style: TextStyle(
+                        fontSize: 14.sp,
+                        color: isAdded ? AppColors.white : Colors.green
+                    ),
                   ),
                 ],
               ),

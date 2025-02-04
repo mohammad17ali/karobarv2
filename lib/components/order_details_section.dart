@@ -44,7 +44,7 @@ class OrderDetailsSection extends StatelessWidget {
   Widget _buildHeader(BuildContext context) => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Text("Order Details", style: AppTextStyles.titleLarge(context)),
+      Text("Order Details", style: AppTextStyles.titleMedium(context)),
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
