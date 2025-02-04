@@ -1,4 +1,3 @@
-// lib/sidebar.dart
 import 'package:flutter/material.dart';
 import '../services/fetchOrders.dart';
 import '../services/postOrder.dart';
@@ -7,6 +6,9 @@ import '../components/order_details_section.dart';
 import '../constants/constants.dart';
 import '../screens/menus.dart';
 import '../screens/dashboard.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+
 
 class Sidebar extends StatefulWidget {
   //final List<Map<String, dynamic>> ordersList;
@@ -82,7 +84,14 @@ class _SidebarState extends State<Sidebar> {
 
 
   List<Map<String, dynamic>> get _activeOrders =>
-      _orders.where((order) => order['Status'] == 'Active').toList();
+      _orders.where((order) => order['Status'] == 'Active').map((order) {
+        return {
+          'OrderNum': order['OrderNum'],
+          'Amount': order['Amount'],
+          'ItemNames': order['ItemNames'].join(', '), // Display as comma-separated string
+        };
+      }).toList();
+
   String selectedValue = 'Monday Menu';
   final List<String> dropdownItems = ["Monday Menu", "Tuesday Menu", "Wednesday Menu"];
   void onButtonPressed() {
@@ -109,9 +118,11 @@ class _SidebarState extends State<Sidebar> {
       child: Column(
         children: [
           //_buildLogo(),
-          const SizedBox(height: 16),
+          SizedBox(
+              height: 5.h
+          ),
           _buildActiveOrdersSection(context),
-          const SizedBox(height: 15),
+          SizedBox(height: 10.h),
           Expanded(
             child: widget.cartItems.isEmpty
                 ? _buildManageSection(context)
@@ -127,27 +138,17 @@ class _SidebarState extends State<Sidebar> {
     );
   }
 
-  Widget _buildLogo() => Padding(
-    padding: const EdgeInsets.only(bottom: 5),
-    child: Image.asset(
-      'lib/assets/logoR.png',
-      height: 30,
-      fit: BoxFit.contain,
-    ),
-  );
-  //Widget _buildManageButton() =>
-
   Widget _buildManageSection(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const SizedBox(height: 10),
+      SizedBox(height: 5.h),
       Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(10),
         height: MediaQuery.of(context).size.height * 0.2,
         decoration: BoxDecoration(
           color: Colors.deepPurple[700],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.primaryLight, width: 1),
+          borderRadius: BorderRadius.circular(12.h),
+          border: Border.all(color: AppColors.primaryLight, width: 1.h),
           image: const DecorationImage(
             image: AssetImage('lib/assets/contB.png'),
             fit: BoxFit.cover,
@@ -158,22 +159,22 @@ class _SidebarState extends State<Sidebar> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Menu", style: AppTextStyles.titleLarge(context)),
-            const SizedBox(height: 10),
+            Text("Menu", style: AppTextStyles.titleMedium(context)),
+            SizedBox(height: 10.h),
             Row(
               children: <Widget>[
                 Expanded(
                   flex: 3,
                   child: SizedBox(
-                    height: 48,
+                    height: 40.h,
                     child: DropdownButtonFormField<String>(
                       value: selectedValue,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16.h),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(10.h),
                           borderSide: BorderSide.none,
                         ),
                       ),
@@ -182,7 +183,10 @@ class _SidebarState extends State<Sidebar> {
                           value: item,
                           child: Text(
                             item,
-                            style: const TextStyle(color: Colors.deepPurple),
+                            style: TextStyle(
+                              color: Colors.deepPurple,
+                              fontSize: 12.h,
+                            ),
                           ),
                         );
                       }).toList(),
@@ -194,32 +198,32 @@ class _SidebarState extends State<Sidebar> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8.w),
                 // Action Button
                 SizedBox(
-                  height: 48,
+                  height: 40.h,
                   child: ElevatedButton(
                     onPressed: onButtonPressed,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.accent,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.h),
                       ),
                     ),
-                    child: const Text("Submit", style: TextStyle(fontSize: 14,color: Colors.white)),
+                    child: Text("Submit", style: TextStyle(fontSize: 14.sp,color: Colors.white)),
                   ),
                 ),
               ],
             ),
-            const Spacer(),
+            //const Spacer(),
           ],
         ),
       ),
-      const SizedBox(height: 24),
+      SizedBox(height: 12.h),
       SizedBox(
         width: double.infinity,
-        height: 48,
+        height: 40.h,
         child: ElevatedButton.icon(
           onPressed: () {
             Navigator.push(
@@ -236,21 +240,21 @@ class _SidebarState extends State<Sidebar> {
             foregroundColor: AppColors.primary,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8.h),
             ),
           ),
         ),
       ),
-      const SizedBox(height: 24),
+      SizedBox(height: 12.h),
       SizedBox(
         width: double.infinity,
-        height: 48,
+        height: 40.h,
         child: ElevatedButton.icon(
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DashboardPage(),
+                builder: (context) => const DashboardPage(),
               ),
             );
           },
@@ -261,7 +265,7 @@ class _SidebarState extends State<Sidebar> {
             foregroundColor: AppColors.primary,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8.h),
             ),
           ),
         ),
@@ -275,10 +279,10 @@ class _SidebarState extends State<Sidebar> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Active Orders", style: AppTextStyles.titleLarge(context)),
-        const SizedBox(height: 12),
+        Text("Active Orders", style: AppTextStyles.titleMedium(context)),
+        SizedBox(height: 12.h),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.25,
+          height: (MediaQuery.of(context).size.height * 0.22).h,
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : ActiveOrdersGrid(activeOrders: _activeOrders),
