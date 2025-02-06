@@ -239,7 +239,7 @@ class _HomePageState extends State<HomePage> {
                     item['name'],
                     style: TextStyle(
                       color: isAdded ? Colors.white : AppColors.primaryDark,
-                      fontSize: 12.sp,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -248,7 +248,7 @@ class _HomePageState extends State<HomePage> {
                     "${item['price']} Rs.",
                     style: TextStyle(
                       color: isAdded ? Colors.white : Colors.green,
-                      fontSize: 12.sp,
+                      fontSize: 14.sp,
                     ),
                   ),
                 ],

@@ -63,8 +63,8 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                   LucideIcons.plus,
                       () => Navigator.pushNamed(context, 'AddMenuManual'),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
+                Padding(
+                  padding: EdgeInsets.all(16.sp),
                   child: Divider(),
                 ),
                 Expanded(
@@ -78,7 +78,7 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                 ),
                 SizedBox(height: 24.h),
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(16.sp),
                   child: SizedBox(
                     width: double.infinity,
                     height: 48.h,
@@ -96,7 +96,7 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.white,
                         foregroundColor: AppColors.primary,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20.sp),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -108,15 +108,13 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
             ),
           ),
 
-          // Main Content (7/10)
           Expanded(
             child: Container(
               color: Colors.white,
               child: Column(
                 children: [
-                  // Header with menu name and edit button
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16.sp),
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       boxShadow: AppShadows.cardShadow,
@@ -126,22 +124,22 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                       children: [
                         Text(
                           selectedMenu,
-                          style: const TextStyle(
-                            fontSize: 24,
+                          style: TextStyle(
+                            fontSize: 20.sp,
                             fontWeight: FontWeight.bold,
                             color: AppColors.primaryDark,
                           ),
                         ),
                         ElevatedButton.icon(
                           onPressed: () {},
-                          icon: const Icon(LucideIcons.pencil),
+                          icon: const Icon(LucideIcons.pencil, color: Colors.white),
                           label: const Text('Edit Menu'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             foregroundColor: AppColors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 12,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20.sp,
+                              vertical: 12.sp,
                             ),
                           ),
                         ),
@@ -152,7 +150,7 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                   // Menu items grouped by category
                   Expanded(
                     child: ListView.builder(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16.sp),
                       itemCount: menuItems.length,
                       itemBuilder: (context, index) {
                         String category = menuItems.keys.elementAt(index);
@@ -162,11 +160,11 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              padding: EdgeInsets.symmetric(vertical: 8.sp),
                               child: Text(
                                 category,
-                                style: const TextStyle(
-                                  fontSize: 20,
+                                style: TextStyle(
+                                  fontSize: 18.sp,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primaryDark,
                                 ),
@@ -185,19 +183,25 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                               itemBuilder: (context, itemIndex) {
                                 return Container(
                                   decoration: AppDecorations.gridTileDecoration(context),
-                                  padding: const EdgeInsets.all(16),
+                                  padding: EdgeInsets.all(16.sp),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
                                         items[itemIndex],
-                                        style: AppTextStyles.cardTitle(context),
+                                        style: TextStyle(
+                                          color: Colors.deepPurple,
+                                          fontSize: 14.sp,
+                                        ),
                                         textAlign: TextAlign.center,
                                       ),
                                       SizedBox(height: 8.h),
                                       Text(
                                         '₹299',
-                                        style: AppTextStyles.priceText(context),
+                                        style: TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 14.sp,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -221,8 +225,8 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
 
   Widget _buildSidebarButton(String text, IconData icon, VoidCallback onTap) {
     return Container(
-      padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(20.sp),
+      margin: EdgeInsets.all(8.sp),
       decoration: BoxDecoration(
         color: Colors.deepPurple[700],
         borderRadius: BorderRadius.circular(12),

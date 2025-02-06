@@ -9,12 +9,12 @@ void main() {
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]).then((_) {
-    runApp(const MyApp());
+    runApp(const karobarApp());
   });
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class karobarApp extends StatelessWidget {
+  const karobarApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

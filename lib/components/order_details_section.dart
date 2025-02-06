@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import '../constants/constants.dart';
 import 'order_item_tile.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 
 class OrderDetailsSection extends StatelessWidget {
   final List<Map<String, dynamic>> cartItems;
@@ -30,11 +32,11 @@ class OrderDetailsSection extends StatelessWidget {
       child: Column(
         children: [
           _buildHeader(context),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.sp),
           _buildOrderList(context),
           const Divider(color: Colors.white70),
           _buildTotalSection(context),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.sp),
           _buildActionButtons(context),
         ],
       ),
@@ -56,7 +58,7 @@ class OrderDetailsSection extends StatelessWidget {
           style: TextStyle(
             color: AppColors.primary,
             fontWeight: FontWeight.bold,
-            fontSize: 14 * MediaQuery.textScaleFactorOf(context),
+            fontSize: 14.sp,
           ),
         ),
       ),
@@ -78,10 +80,20 @@ class OrderDetailsSection extends StatelessWidget {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text("Total:", style: AppTextStyles.titleLarge(context)),
+        Text("Total:",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16.sp,
+            ),
+        ),
         Text(
           "$totalAmount Rs.",
-          style: AppTextStyles.priceText(context),
+            style: TextStyle(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+              fontSize: 16.sp,
+            ),
         ),
       ],
     ),
@@ -96,11 +108,12 @@ class OrderDetailsSection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 12),
           ),
           onPressed: onConfirm,
-          child: const Text(
+          child: Text(
             "Confirm",
             style: TextStyle(
               color: AppColors.primary,
               fontWeight: FontWeight.bold,
+              fontSize: 12.sp,
             ),
           ),
         ),
@@ -113,11 +126,12 @@ class OrderDetailsSection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 12),
           ),
           onPressed: onPay,
-          child: const Text(
+          child: Text(
             "Pay Now",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
+              fontSize: 12.sp,
             ),
           ),
         ),

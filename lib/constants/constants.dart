@@ -52,7 +52,7 @@ class AppTextStyles {
 
   // Body text
   static TextStyle bodyText(BuildContext context) => TextStyle(
-    fontSize: ResponsiveSize.getFontSize(context, 14.sp),
+    fontSize: ResponsiveSize.getFontSize(context, 16.sp),
     color: AppColors.white,
   );
 
