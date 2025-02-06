@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/fetchItems.dart';
 import '../components/sidebar.dart';
@@ -72,7 +73,7 @@ class _HomePageState extends State<HomePage> {
       : _foodItems.where((item) => item['category'].contains(_selectedCategory)).toList();
 
   void _handleItemTap(Map<String, dynamic> item) {
-    final itemID = item['ItemID'];
+    final itemID = item['itemID'];
     setState(() {
       if (!_cart.containsKey(itemID)) {
         _cart[itemID] = 1;
@@ -195,7 +196,7 @@ class _HomePageState extends State<HomePage> {
     itemCount: _filteredItems.length,
     itemBuilder: (context, index) {
       final item = _filteredItems[index];
-      final itemID = item['ItemID'];
+      final itemID = item['itemID'];
       final isAdded = _cart.containsKey(itemID);
       final quantity = _cart[itemID] ?? 0;
 
@@ -236,12 +237,19 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text(
                     item['name'],
-                    style: AppTextStyles.cardTitle(context),
+                    style: TextStyle(
+                      color: isAdded ? Colors.white : AppColors.primaryDark,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     "${item['price']} Rs.",
-                    style: AppTextStyles.priceText(context),
+                    style: TextStyle(
+                      color: isAdded ? Colors.white : Colors.green,
+                      fontSize: 14.sp,
+                    ),
                   ),
                 ],
               ),
@@ -266,7 +274,7 @@ class _HomePageState extends State<HomePage> {
           right: 10,
           bottom: 10,
           child: GestureDetector(
-            onTap: () => _handleItemRemove(item['ItemID'], quantity),
+            onTap: () => _handleItemRemove(item['itemID'], quantity),
             child: CircleAvatar(
               radius: 24,
               backgroundColor: Colors.white,
