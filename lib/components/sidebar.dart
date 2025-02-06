@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../services/fetchOrders.dart';
 import '../services/postOrder.dart';
 import '../components/active_orders_grid.dart';
@@ -88,7 +89,7 @@ class _SidebarState extends State<Sidebar> {
         return {
           'OrderNum': order['OrderNum'],
           'Amount': order['Amount'],
-          'ItemNames': order['ItemNames'].join(', '), // Display as comma-separated string
+          'ItemNames': order['ItemNames'].join(', '), 
         };
       }).toList();
 
@@ -169,6 +170,7 @@ class _SidebarState extends State<Sidebar> {
                     height: 40.h,
                     child: DropdownButtonFormField<String>(
                       value: selectedValue,
+
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -185,7 +187,7 @@ class _SidebarState extends State<Sidebar> {
                             item,
                             style: TextStyle(
                               color: Colors.deepPurple,
-                              fontSize: 12.h,
+                              fontSize: 14.sp,
                             ),
                           ),
                         );
@@ -199,7 +201,6 @@ class _SidebarState extends State<Sidebar> {
                   ),
                 ),
                 SizedBox(width: 8.w),
-                // Action Button
                 SizedBox(
                   height: 40.h,
                   child: ElevatedButton(
