@@ -2,17 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/fetchOrders.dart';
 import '../services/postOrder.dart';
-import '../components/active_orders_grid.dart';
+import '../components/active_orders_section.dart';
 import '../components/order_details_section.dart';
 import '../constants/constants.dart';
 import '../screens/menus.dart';
 import '../screens/dashboard.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
-
 class Sidebar extends StatefulWidget {
-  //final List<Map<String, dynamic>> ordersList;
   final List<Map<String, dynamic>> cartItems;
   final VoidCallback onOrderSuccess;
 
@@ -29,6 +26,9 @@ class Sidebar extends StatefulWidget {
 class _SidebarState extends State<Sidebar> {
   late List<Map<String, dynamic>> _orders = [];
   bool _isLoading = true;
+  bool _isOrderSelected = false;
+  Map<String, dynamic>? _selectedOrder;
+  bool _isProcessingOrder = false; // New state for order processing
 
   @override
   void initState() {
@@ -44,12 +44,15 @@ class _SidebarState extends State<Sidebar> {
         _isLoading = false;
       });
     } catch (e) {
-      //print('Error loading orders: $e');
       setState(() => _isLoading = false);
     }
   }
 
   Future<void> _postOrder() async {
+    setState(() {
+      _isProcessingOrder = true; // Show loading state
+    });
+
     try {
       await OrderService.postOrders(
         widget.cartItems,
@@ -59,6 +62,11 @@ class _SidebarState extends State<Sidebar> {
       );
       widget.onOrderSuccess();
       await _loadOrders();
+
+      setState(() {
+        _isProcessingOrder = false; // Hide loading state
+      });
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -70,6 +78,10 @@ class _SidebarState extends State<Sidebar> {
         );
       }
     } catch (e) {
+      setState(() {
+        _isProcessingOrder = false; // Hide loading state on error
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Failed to place order. Please try again.'),
@@ -78,26 +90,98 @@ class _SidebarState extends State<Sidebar> {
           backgroundColor: Colors.red,
         ),
       );
-      //print('Error posting order: $e');
     }
   }
-  int get _nextOrderNumber => (_orders.isNotEmpty ? _orders.last['OrderNum'] as int : 0) + 1;
 
+  int get _nextOrderNumber => (_orders.isNotEmpty ? _orders.last['OrderNum'] as int : 0) + 1;
 
   List<Map<String, dynamic>> get _activeOrders =>
       _orders.where((order) => order['Status'] == 'Active').map((order) {
         return {
           'OrderNum': order['OrderNum'],
           'Amount': order['Amount'],
-          'ItemNames': order['ItemNames'].join(', '), 
+          'ItemNames': order['ItemNames'].join(', '),
         };
       }).toList();
 
+  void _onOrderTilePressed(Map<String, dynamic> order) {
+    setState(() {
+      _isOrderSelected = true;
+      _selectedOrder = order;
+    });
+  }
+
+  void _onBackToOrders() {
+    setState(() {
+      _isOrderSelected = false;
+      _selectedOrder = null;
+    });
+  }
+
+  void _onCheckOrder() {
+    // Implement check order logic here
+    print('Check order: ${_selectedOrder?['OrderNum']}');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Checking order ${_selectedOrder?['OrderNum']}...'),
+        backgroundColor: AppColors.primary,
+      ),
+    );
+  }
+
+  void _onCancelOrder() {
+    // Implement cancel order logic here
+    print('Cancel order: ${_selectedOrder?['OrderNum']}');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Order ${_selectedOrder?['OrderNum']} cancelled'),
+        backgroundColor: Colors.red,
+      ),
+    );
+    _onBackToOrders(); // Go back to orders list after cancelling
+  }
+
   String selectedValue = 'Monday Menu';
   final List<String> dropdownItems = ["Monday Menu", "Tuesday Menu", "Wednesday Menu"];
+
   void onButtonPressed() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Selected: $selectedValue")),
+    );
+  }
+
+  // New method to build the loading widget
+  Widget _buildOrderProcessingSection() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 60.w,
+          height: 60.h,
+          child: CircularProgressIndicator(
+            strokeWidth: 4.w,
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.accent),
+          ),
+        ),
+        SizedBox(height: 20.h),
+        Text(
+          'Processing Order...',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: 10.h),
+        Text(
+          'Please wait while we confirm your order',
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.8),
+            fontSize: 12.sp,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 
@@ -106,7 +190,7 @@ class _SidebarState extends State<Sidebar> {
     return Container(
       width: MediaQuery.of(context).size.width * 0.3,
       decoration: const BoxDecoration(
-        color: AppColors.primary,
+        color: Color(0xFF4527A0),
         boxShadow: [
           BoxShadow(
             color: Colors.black26,
@@ -118,21 +202,29 @@ class _SidebarState extends State<Sidebar> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          //_buildLogo(),
-          SizedBox(
-              height: 5.h
+          SizedBox(height: 5.h),
+          ActiveOrdersSection(
+            isLoading: _isLoading,
+            activeOrders: _activeOrders,
+            isOrderSelected: _isOrderSelected,
+            selectedOrder: _selectedOrder,
+            onOrderTilePressed: _onOrderTilePressed,
+            onBackToOrders: _onBackToOrders,
+            onCheckOrder: _onCheckOrder,
+            onCancelOrder: _onCancelOrder,
           ),
-          _buildActiveOrdersSection(context),
           SizedBox(height: 10.h),
           Expanded(
-            child: widget.cartItems.isEmpty
-                ? _buildManageSection(context)
-                : OrderDetailsSection(
+            child: _isProcessingOrder
+                ? _buildOrderProcessingSection() // Show loading when processing order
+                : widget.cartItems.isEmpty
+                ? _buildManageSection(context) // Show manage section when cart is empty
+                : OrderDetailsSection( // Show order details when cart has items
               cartItems: widget.cartItems,
               nextOrderNumber: _nextOrderNumber,
               onConfirm: _postOrder,
               onPay: () {},
-              ),
+            ),
           ),
         ],
       ),
@@ -170,7 +262,6 @@ class _SidebarState extends State<Sidebar> {
                     height: 40.h,
                     child: DropdownButtonFormField<String>(
                       value: selectedValue,
-
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -212,12 +303,11 @@ class _SidebarState extends State<Sidebar> {
                         borderRadius: BorderRadius.circular(8.h),
                       ),
                     ),
-                    child: Text("Submit", style: TextStyle(fontSize: 14.sp,color: Colors.white)),
+                    child: Text("Submit", style: TextStyle(fontSize: 14.sp, color: Colors.white)),
                   ),
                 ),
               ],
             ),
-            //const Spacer(),
           ],
         ),
       ),
@@ -272,23 +362,5 @@ class _SidebarState extends State<Sidebar> {
         ),
       ),
     ],
-  );
-
-  Widget _buildActiveOrdersSection(BuildContext context) => Container(
-    padding: const EdgeInsets.all(12),
-    decoration: AppDecorations.sidebarContainer(context),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Active Orders", style: AppTextStyles.titleMedium(context)),
-        SizedBox(height: 12.h),
-        SizedBox(
-          height: (MediaQuery.of(context).size.height * 0.22).h,
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : ActiveOrdersGrid(activeOrders: _activeOrders),
-        ),
-      ],
-    ),
   );
 }
