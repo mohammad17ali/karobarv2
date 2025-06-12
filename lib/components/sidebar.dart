@@ -1,6 +1,7 @@
+//sidebar.dart
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../services/fetchOrders.dart';
 import '../services/postOrder.dart';
 import '../components/active_orders_section.dart';
 import '../components/order_details_section.dart';
@@ -12,11 +13,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class Sidebar extends StatefulWidget {
   final List<Map<String, dynamic>> cartItems;
   final VoidCallback onOrderSuccess;
+  final List<Map<String, dynamic>> orders;
+  final bool isOrdersLoading;
+  final VoidCallback onRefreshOrders;
+  final Function(Map<String, dynamic>) onCancelOrder;
+  final Function(Map<String, dynamic>) onPayOrder;
 
   const Sidebar({
     super.key,
     required this.cartItems,
     required this.onOrderSuccess,
+    required this.orders,
+    required this.isOrdersLoading,
+    required this.onRefreshOrders,
+    required this.onCancelOrder,
+    required this.onPayOrder,
   });
 
   @override
@@ -24,33 +35,18 @@ class Sidebar extends StatefulWidget {
 }
 
 class _SidebarState extends State<Sidebar> {
-  late List<Map<String, dynamic>> _orders = [];
-  bool _isLoading = true;
   bool _isOrderSelected = false;
   Map<String, dynamic>? _selectedOrder;
-  bool _isProcessingOrder = false; // New state for order processing
+  bool _isProcessingOrder = false; 
 
   @override
   void initState() {
     super.initState();
-    _loadOrders();
-  }
-
-  Future<void> _loadOrders() async {
-    try {
-      final orders = await FetchOrders.fetchOrders();
-      setState(() {
-        _orders = orders;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() => _isLoading = false);
-    }
   }
 
   Future<void> _postOrder() async {
     setState(() {
-      _isProcessingOrder = true; // Show loading state
+      _isProcessingOrder = true;
     });
 
     try {
@@ -61,10 +57,10 @@ class _SidebarState extends State<Sidebar> {
         _nextOrderNumber,
       );
       widget.onOrderSuccess();
-      await _loadOrders();
+      widget.onRefreshOrders(); 
 
       setState(() {
-        _isProcessingOrder = false; // Hide loading state
+        _isProcessingOrder = false; 
       });
 
       if (mounted) {
@@ -79,7 +75,7 @@ class _SidebarState extends State<Sidebar> {
       }
     } catch (e) {
       setState(() {
-        _isProcessingOrder = false; // Hide loading state on error
+        _isProcessingOrder = false;
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -93,14 +89,16 @@ class _SidebarState extends State<Sidebar> {
     }
   }
 
-  int get _nextOrderNumber => (_orders.isNotEmpty ? _orders.last['OrderNum'] as int : 0) + 1;
+  int get _nextOrderNumber => (widget.orders.isNotEmpty ? widget.orders.last['OrderNum'] as int : 0) + 1;
 
   List<Map<String, dynamic>> get _activeOrders =>
-      _orders.where((order) => order['Status'] == 'Active').map((order) {
+      widget.orders.where((order) => order['Status'] == 'Active').map((order) {
         return {
           'OrderNum': order['OrderNum'],
           'Amount': order['Amount'],
-          'ItemNames': order['ItemNames'].join(', '),
+          'ItemNames': order['ItemNames'] is List
+              ? (order['ItemNames'] as List).join(', ')
+              : order['ItemNames'].toString(),
         };
       }).toList();
 
@@ -119,27 +117,34 @@ class _SidebarState extends State<Sidebar> {
   }
 
   void _onCheckOrder() {
-    // Implement check order logic here
-    print('Check order: ${_selectedOrder?['OrderNum']}');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Checking order ${_selectedOrder?['OrderNum']}...'),
-        backgroundColor: AppColors.primary,
-      ),
-    );
+    if (_selectedOrder != null) {
+      print('Check order: ${_selectedOrder?['OrderNum']}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Checking order ${_selectedOrder?['OrderNum']}...'),
+          backgroundColor: AppColors.primary,
+        ),
+      );
+    }
   }
 
   void _onCancelOrder() {
-    // Implement cancel order logic here
-    print('Cancel order: ${_selectedOrder?['OrderNum']}');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Order ${_selectedOrder?['OrderNum']} cancelled'),
-        backgroundColor: Colors.red,
-      ),
-    );
-    _onBackToOrders(); // Go back to orders list after cancelling
+    if (_selectedOrder != null) {
+      final fullOrder = widget.orders.firstWhere(
+            (order) => order['OrderNum'] == _selectedOrder!['OrderNum'],
+        orElse: () => _selectedOrder!,
+      );
+
+      widget.onCancelOrder(fullOrder);
+      _onBackToOrders();
+    }
   }
+
+  void _onPayOrder(Map<String, dynamic> orderToPay) {
+    widget.onPayOrder(orderToPay);
+    _onBackToOrders(); 
+  }
+
 
   String selectedValue = 'Monday Menu';
   final List<String> dropdownItems = ["Monday Menu", "Tuesday Menu", "Wednesday Menu"];
@@ -150,7 +155,6 @@ class _SidebarState extends State<Sidebar> {
     );
   }
 
-  // New method to build the loading widget
   Widget _buildOrderProcessingSection() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -176,7 +180,7 @@ class _SidebarState extends State<Sidebar> {
         Text(
           'Please wait while we confirm your order',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white70,
             fontSize: 12.sp,
           ),
           textAlign: TextAlign.center,
@@ -204,7 +208,7 @@ class _SidebarState extends State<Sidebar> {
         children: [
           SizedBox(height: 5.h),
           ActiveOrdersSection(
-            isLoading: _isLoading,
+            isLoading: widget.isOrdersLoading, 
             activeOrders: _activeOrders,
             isOrderSelected: _isOrderSelected,
             selectedOrder: _selectedOrder,
@@ -212,18 +216,19 @@ class _SidebarState extends State<Sidebar> {
             onBackToOrders: _onBackToOrders,
             onCheckOrder: _onCheckOrder,
             onCancelOrder: _onCancelOrder,
+            onPayOrder: _onPayOrder, 
           ),
           SizedBox(height: 10.h),
           Expanded(
             child: _isProcessingOrder
-                ? _buildOrderProcessingSection() // Show loading when processing order
+                ? _buildOrderProcessingSection() 
                 : widget.cartItems.isEmpty
-                ? _buildManageSection(context) // Show manage section when cart is empty
-                : OrderDetailsSection( // Show order details when cart has items
+                ? _buildManageSection(context) 
+                : OrderDetailsSection( 
               cartItems: widget.cartItems,
               nextOrderNumber: _nextOrderNumber,
               onConfirm: _postOrder,
-              onPay: () {},
+              onPay: () {}, 
             ),
           ),
         ],
