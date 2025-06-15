@@ -67,7 +67,7 @@ class OrderDetailsCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        _buildDetailRow('Order Number:', '${order['OrderNum']}'),
+ _buildDetailRow('Order Number:', '${order['OrderNum']}'),
                         _buildDetailRow('Amount:', '${order['Amount']} Rs.'),
                         const SizedBox(height: 16),
                         const Text(
