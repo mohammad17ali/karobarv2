@@ -43,10 +43,10 @@ class _LedgerPageState extends State<LedgerPage> {
       appBar: _buildAppBar(),
       body: Row(
         children: [
-          Sidebar(
-            cartItems: const [],
-            onOrderSuccess: () {},
-          ),
+          // Sidebar(
+          //   cartItems: const [],
+          //   onOrderSuccess: () {},
+          // ),
           Expanded(child: _buildLedgerContent()),
         ],
       ),
@@ -55,7 +55,7 @@ class _LedgerPageState extends State<LedgerPage> {
 
   PreferredSizeWidget _buildAppBar() => AppBar(
     title: Text(
-      "The Zaika Restaurant",
+      "Golden Rice, Casa Bella",
       style: AppTextStyles.titleLarge(context),
     ),
     backgroundColor: AppColors.primary,

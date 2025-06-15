@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 
 class ResponsiveSize {
   static double getFontSize(BuildContext context, double baseSize) {
@@ -39,44 +37,44 @@ class AppColors {
 class AppTextStyles {
   // Headings
   static TextStyle titleLarge(BuildContext context) => TextStyle(
-    fontSize: ResponsiveSize.getFontSize(context, 20.sp),
+    fontSize: ResponsiveSize.getFontSize(context, 20),
     fontWeight: FontWeight.bold,
     color: AppColors.white,
   );
 
   static TextStyle titleMedium(BuildContext context) => TextStyle(
-    fontSize: ResponsiveSize.getFontSize(context, 18.sp),
+    fontSize: ResponsiveSize.getFontSize(context, 18),
     fontWeight: FontWeight.bold,
     color: AppColors.white,
   );
 
   // Body text
   static TextStyle bodyText(BuildContext context) => TextStyle(
-    fontSize: ResponsiveSize.getFontSize(context, 16.sp),
+    fontSize: ResponsiveSize.getFontSize(context, 14),
     color: AppColors.white,
   );
 
   static TextStyle bodyTextDark(BuildContext context) => TextStyle(
-    fontSize: ResponsiveSize.getFontSize(context, 14.sp),
+    fontSize: ResponsiveSize.getFontSize(context, 14),
     color: AppColors.primaryDark,
   );
 
   // Card text
   static TextStyle cardTitle(BuildContext context) => TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: ResponsiveSize.getFontSize(context, 12.sp),
+    fontSize: ResponsiveSize.getFontSize(context, 12),
     color: AppColors.primaryDark,
   );
 
   static TextStyle priceText(BuildContext context) => TextStyle(
     color: AppColors.success,
     fontWeight: FontWeight.bold,
-    fontSize: ResponsiveSize.getFontSize(context, 12.sp),
+    fontSize: ResponsiveSize.getFontSize(context, 12),
   );
 
   // Button text
   static TextStyle buttonText(BuildContext context) => TextStyle(
-    fontSize: ResponsiveSize.getFontSize(context, 14.sp),
+    fontSize: ResponsiveSize.getFontSize(context, 14),
     fontWeight: FontWeight.w500,
     color: AppColors.white,
   );
@@ -84,7 +82,7 @@ class AppTextStyles {
   static TextStyle priceTextLarge(BuildContext context) => TextStyle(
     color: AppColors.success,
     fontWeight: FontWeight.bold,
-    fontSize: ResponsiveSize.getFontSize(context, 16.sp),
+    fontSize: ResponsiveSize.getFontSize(context, 16),
   );
 }
 

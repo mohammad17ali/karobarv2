@@ -1,4 +1,3 @@
-// lib/components/order_details_section.dart
 import 'package:flutter/material.dart';
 import '../constants/constants.dart';
 import 'order_item_tile.dart';
@@ -32,11 +31,11 @@ class OrderDetailsSection extends StatelessWidget {
       child: Column(
         children: [
           _buildHeader(context),
-          SizedBox(height: 12.sp),
+          SizedBox(height: 6.sp),
           _buildOrderList(context),
           const Divider(color: Colors.white70),
           _buildTotalSection(context),
-          SizedBox(height: 12.sp),
+          SizedBox(height: 6.sp),
           _buildActionButtons(context),
         ],
       ),
@@ -46,7 +45,14 @@ class OrderDetailsSection extends StatelessWidget {
   Widget _buildHeader(BuildContext context) => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Text("Order Details", style: AppTextStyles.titleMedium(context)),
+      Text(
+        "Order Details",
+        style: TextStyle(
+          fontSize: 16.sp,
+          fontWeight: FontWeight.bold,
+          color: AppColors.white,
+        ),
+      ),
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
@@ -58,7 +64,7 @@ class OrderDetailsSection extends StatelessWidget {
           style: TextStyle(
             color: AppColors.primary,
             fontWeight: FontWeight.bold,
-            fontSize: 14.sp,
+            fontSize: 12.sp,
           ),
         ),
       ),
@@ -81,19 +87,19 @@ class OrderDetailsSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text("Total:",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 16.sp,
-            ),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         Text(
           "$totalAmount Rs.",
-            style: TextStyle(
-              color: Colors.green,
-              fontWeight: FontWeight.bold,
-              fontSize: 16.sp,
-            ),
+          style: TextStyle(
+            color: Colors.green,
+            fontWeight: FontWeight.bold,
+            fontSize: 12.sp,
+          ),
         ),
       ],
     ),

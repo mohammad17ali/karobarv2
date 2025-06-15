@@ -1,0 +1,2 @@
+C:/alee/karobar_v2/android/app/.cxx/RelWithDebInfo/4s5n85z4/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/alee/karobar_v2/android/app/.cxx/RelWithDebInfo/4s5n85z4/arm64-v8a/CMakeFiles/rebuild_cache.dir

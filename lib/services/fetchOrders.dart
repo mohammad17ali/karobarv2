@@ -1,6 +1,7 @@
+// fetchOrders.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../assets/keys.dart';
+import '../assets/keys.dart'; // Ensure this path is correct for your project
 
 class FetchOrders {
   static const String apiUrl =
@@ -24,6 +25,7 @@ class FetchOrders {
 
         for (var record in data['records']) {
           final fields = record['fields'];
+          final String airtableRecordId = record['id'];
 
           int orderNum = fields['OrderNum'] ?? 1;
           double amount = (fields['Amount'] ?? 0).toDouble();
@@ -33,19 +35,24 @@ class FetchOrders {
           if (aggregatedOrders.containsKey(orderNum)) {
             aggregatedOrders[orderNum]!['Amount'] += amount;
             aggregatedOrders[orderNum]!['ItemNames'].add(itemName);
+            (aggregatedOrders[orderNum]!['AirtableRecordIds'] as List<String>).add(airtableRecordId);
           } else {
             aggregatedOrders[orderNum] = {
               'OrderNum': orderNum,
               'Amount': amount,
               'Status': status,
-              'OrderID': fields['OrderID'] ?? ['user123'],
+              'OrderID': fields['OrderID'] ?? 'user123',
               'ItemNames': [itemName],
+              'AirtableRecordIds': [airtableRecordId],
             };
           }
         }
+      } else {
+        print('Error fetching orders - Status Code: ${response.statusCode}');
+        print('Response Body: ${response.body}');
       }
     } catch (e) {
-      //print('Error fetching orders: $e');
+      print('Network or parsing error fetching orders: $e');
     }
 
     return aggregatedOrders.values.toList();

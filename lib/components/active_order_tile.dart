@@ -1,9 +1,9 @@
-// active_order_tile.dart
+//not being used
+
 import 'package:flutter/material.dart';
 import '../constants/constants.dart';
 import 'order_details_card.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 
 class ActiveOrderTile extends StatelessWidget {
   final Map<String, dynamic> order;
@@ -40,17 +40,18 @@ class ActiveOrderTile extends StatelessWidget {
             Text(
               "${order['OrderNum']}",
               style: TextStyle(
-                fontSize: 20.sp,
-                color: AppColors.primary,
+                fontSize: 18.sp,
+                color: const Color(0xFF4527A0),
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 3.h),
             Text(
               "${order['Amount']} Rs.",
               style: TextStyle(
                 fontSize: 10.sp,
-                color: Colors.green,
+                color: const Color(0xFF43356F),
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],

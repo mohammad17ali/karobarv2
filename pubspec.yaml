@@ -23,6 +23,8 @@ dependencies:
   build_runner: ^2.4.7
   lucide_icons_flutter  : ^1.2.6
   flutter_screenutil: ^5.9.0
+  image_picker: ^1.0.4
+  qr_flutter: ^4.1.0
 
 
 dev_dependencies:

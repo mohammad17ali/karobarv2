@@ -1,7 +1,8 @@
+//order_item_tile.dart
+
 import 'package:flutter/material.dart';
 import '../constants/constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 
 class OrderItemTile extends StatelessWidget {
   final Map<String, dynamic> item;
@@ -14,7 +15,7 @@ class OrderItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4.h),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -24,7 +25,8 @@ class OrderItemTile extends StatelessWidget {
               item['name'],
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                fontSize: 14.sp,
               ),
               overflow: TextOverflow.ellipsis,
             ),
@@ -33,9 +35,10 @@ class OrderItemTile extends StatelessWidget {
             child: Text(
               "${item['quantity']} x ${item['price']}",
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 16.sp,
-              ),
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 14.sp,
+            ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -44,7 +47,8 @@ class OrderItemTile extends StatelessWidget {
               "${(item['quantity'] as int) * (item['price'] as int)} Rs.",
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                fontSize: 14.sp,
               ),
               textAlign: TextAlign.right,
             ),

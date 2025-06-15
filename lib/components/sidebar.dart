@@ -1,25 +1,33 @@
+//sidebar.dart
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../services/fetchOrders.dart';
 import '../services/postOrder.dart';
-import '../components/active_orders_grid.dart';
+import '../components/active_orders_section.dart';
 import '../components/order_details_section.dart';
 import '../constants/constants.dart';
 import '../screens/menus.dart';
 import '../screens/dashboard.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
-
 class Sidebar extends StatefulWidget {
-  //final List<Map<String, dynamic>> ordersList;
   final List<Map<String, dynamic>> cartItems;
   final VoidCallback onOrderSuccess;
+  final List<Map<String, dynamic>> orders;
+  final bool isOrdersLoading;
+  final VoidCallback onRefreshOrders;
+  final Function(Map<String, dynamic>) onCancelOrder;
+  final Function(Map<String, dynamic>) onPayOrder;
 
   const Sidebar({
     super.key,
     required this.cartItems,
     required this.onOrderSuccess,
+    required this.orders,
+    required this.isOrdersLoading,
+    required this.onRefreshOrders,
+    required this.onCancelOrder,
+    required this.onPayOrder,
   });
 
   @override
@@ -27,29 +35,20 @@ class Sidebar extends StatefulWidget {
 }
 
 class _SidebarState extends State<Sidebar> {
-  late List<Map<String, dynamic>> _orders = [];
-  bool _isLoading = true;
+  bool _isOrderSelected = false;
+  Map<String, dynamic>? _selectedOrder;
+  bool _isProcessingOrder = false; // State for order processing
 
   @override
   void initState() {
     super.initState();
-    _loadOrders();
-  }
-
-  Future<void> _loadOrders() async {
-    try {
-      final orders = await FetchOrders.fetchOrders();
-      setState(() {
-        _orders = orders;
-        _isLoading = false;
-      });
-    } catch (e) {
-      //print('Error loading orders: $e');
-      setState(() => _isLoading = false);
-    }
   }
 
   Future<void> _postOrder() async {
+    setState(() {
+      _isProcessingOrder = true;
+    });
+
     try {
       await OrderService.postOrders(
         widget.cartItems,
@@ -57,8 +56,14 @@ class _SidebarState extends State<Sidebar> {
         "out9987654321",
         _nextOrderNumber,
       );
+
       widget.onOrderSuccess();
-      await _loadOrders();
+      widget.onRefreshOrders();
+
+      setState(() {
+        _isProcessingOrder = false;
+      });
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -70,34 +75,123 @@ class _SidebarState extends State<Sidebar> {
         );
       }
     } catch (e) {
+      setState(() {
+        _isProcessingOrder = false;
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to place order. Please try again.'),
+        SnackBar(
+          content: Text('Failed to place order: ${e.toString()}'),
           duration: Duration(seconds: 3),
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.red,
         ),
       );
-      //print('Error posting order: $e');
     }
   }
-  int get _nextOrderNumber => (_orders.isNotEmpty ? _orders.last['OrderNum'] as int : 0) + 1;
 
+  int get _nextOrderNumber => (widget.orders.isNotEmpty ? widget.orders.last['OrderNum'] as int : 0) + 1;
 
   List<Map<String, dynamic>> get _activeOrders =>
-      _orders.where((order) => order['Status'] == 'Active').map((order) {
+      widget.orders.where((order) => order['Status'] == 'Active').map((order) {
         return {
           'OrderNum': order['OrderNum'],
           'Amount': order['Amount'],
-          'ItemNames': order['ItemNames'].join(', '), // Display as comma-separated string
+          'ItemNames': order['ItemNames'] is List
+              ? (order['ItemNames'] as List).join(', ')
+              : order['ItemNames'].toString(),
+          'Status': order['Status'], // FIXED: Added Status field
         };
       }).toList();
 
+  void _onOrderTilePressed(Map<String, dynamic> order) {
+    setState(() {
+      _isOrderSelected = true;
+      _selectedOrder = order;
+    });
+  }
+
+  void _onBackToOrders() {
+    setState(() {
+      _isOrderSelected = false;
+      _selectedOrder = null;
+    });
+  }
+
+  void _onCheckOrder() {
+    if (_selectedOrder != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Checking order ${_selectedOrder?['OrderNum']}...'),
+          backgroundColor: AppColors.primary,
+        ),
+      );
+    }
+  }
+
+  void _onCancelOrder() {
+    if (_selectedOrder != null) {final fullOrder = widget.orders.firstWhere(
+            (order) => order['OrderNum'] == _selectedOrder!['OrderNum'],
+        orElse: () => _selectedOrder!,
+      );
+
+      widget.onCancelOrder(fullOrder);
+      _onBackToOrders(); // Go back to orders list after cancelling
+    }
+  }
+
+  void _onPayOrder(Map<String, dynamic> orderToPay) {
+    print('DEBUG: _onPayOrder called with order: ${orderToPay['OrderNum']}');
+
+    final fullOrder = widget.orders.firstWhere(
+          (order) => order['OrderNum'] == orderToPay['OrderNum'],
+      orElse: () => orderToPay,
+    );
+
+    widget.onPayOrder(fullOrder); // Pass the full order data to parent
+    _onBackToOrders(); // Go back to orders list after payment
+  }
+
   String selectedValue = 'Monday Menu';
   final List<String> dropdownItems = ["Monday Menu", "Tuesday Menu", "Wednesday Menu"];
+
   void onButtonPressed() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Selected: $selectedValue")),
+    );
+  }
+
+  Widget _buildOrderProcessingSection() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 60.w,
+          height: 60.h,
+          child: CircularProgressIndicator(
+            strokeWidth: 4.w,
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.accent),
+          ),
+        ),
+        SizedBox(height: 20.h),
+        Text(
+          'Processing Order...',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: 10.h),
+        Text(
+          'Please wait while we confirm your order',
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 12.sp,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 
@@ -106,7 +200,7 @@ class _SidebarState extends State<Sidebar> {
     return Container(
       width: MediaQuery.of(context).size.width * 0.3,
       decoration: const BoxDecoration(
-        color: AppColors.primary,
+        color: Color(0xFF4527A0),
         boxShadow: [
           BoxShadow(
             color: Colors.black26,
@@ -118,21 +212,30 @@ class _SidebarState extends State<Sidebar> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          //_buildLogo(),
-          SizedBox(
-              height: 5.h
+          SizedBox(height: 5.h),
+          ActiveOrdersSection(
+            isLoading: widget.isOrdersLoading,
+            activeOrders: _activeOrders,
+            isOrderSelected: _isOrderSelected,
+            selectedOrder: _selectedOrder,
+            onOrderTilePressed: _onOrderTilePressed,
+            onBackToOrders: _onBackToOrders,
+            onCheckOrder: _onCheckOrder,
+            onCancelOrder: _onCancelOrder,
+            onPayOrder: _onPayOrder,
           ),
-          _buildActiveOrdersSection(context),
           SizedBox(height: 10.h),
           Expanded(
-            child: widget.cartItems.isEmpty
+            child: _isProcessingOrder
+                ? _buildOrderProcessingSection()
+                : widget.cartItems.isEmpty
                 ? _buildManageSection(context)
                 : OrderDetailsSection(
               cartItems: widget.cartItems,
               nextOrderNumber: _nextOrderNumber,
               onConfirm: _postOrder,
-              onPay: () {},
-              ),
+              onPay: () {}, // This onPay is not used for direct payment in this section
+            ),
           ),
         ],
       ),
@@ -170,7 +273,6 @@ class _SidebarState extends State<Sidebar> {
                     height: 40.h,
                     child: DropdownButtonFormField<String>(
                       value: selectedValue,
-
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -201,7 +303,6 @@ class _SidebarState extends State<Sidebar> {
                   ),
                 ),
                 SizedBox(width: 8.w),
-                // Action Button
                 SizedBox(
                   height: 40.h,
                   child: ElevatedButton(
@@ -213,12 +314,11 @@ class _SidebarState extends State<Sidebar> {
                         borderRadius: BorderRadius.circular(8.h),
                       ),
                     ),
-                    child: Text("Submit", style: TextStyle(fontSize: 14.sp,color: Colors.white)),
+                    child: Text("Submit", style: TextStyle(fontSize: 14.sp, color: Colors.white)),
                   ),
                 ),
               ],
             ),
-            //const Spacer(),
           ],
         ),
       ),
@@ -273,23 +373,5 @@ class _SidebarState extends State<Sidebar> {
         ),
       ),
     ],
-  );
-
-  Widget _buildActiveOrdersSection(BuildContext context) => Container(
-    padding: const EdgeInsets.all(12),
-    decoration: AppDecorations.sidebarContainer(context),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Active Orders", style: AppTextStyles.titleMedium(context)),
-        SizedBox(height: 12.h),
-        SizedBox(
-          height: (MediaQuery.of(context).size.height * 0.22).h,
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : ActiveOrdersGrid(activeOrders: _activeOrders),
-        ),
-      ],
-    ),
   );
 }

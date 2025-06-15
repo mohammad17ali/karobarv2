@@ -17,6 +17,7 @@ class OrderDetailsCard extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
+          // Blurred background
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
             child: Container(
@@ -55,10 +56,8 @@ class OrderDetailsCard extends StatelessWidget {
                   // Content
                   Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                    child: ListView( // Changed from Column to ListView to allow scrolling for items
+                     children: [
                         const Text(
                           'Order Details',
                           style: TextStyle(
@@ -70,7 +69,27 @@ class OrderDetailsCard extends StatelessWidget {
                         const SizedBox(height: 16),
                         _buildDetailRow('Order Number:', '${order['OrderNum']}'),
                         _buildDetailRow('Amount:', '${order['Amount']} Rs.'),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Items:',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // Display cart items
+                        if (order['cartItems'] != null)
+                          ...List.generate(
+                            order['cartItems'].length,
+                                (index) {
+                              final item = order['cartItems'][index];
+                              return _buildItemRow(
+                                  item['name'], item['quantity'], item['price']);
+                            },
+                          ),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -123,6 +142,29 @@ class OrderDetailsCard extends StatelessWidget {
     );
   }
 
+  Widget _buildItemRow(String name, int quantity, double price) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '$quantity x $name',
+            style: const TextStyle(
+              fontSize: 14,
+            ),
+          ),
+          Text(
+            '${(quantity * price).toStringAsFixed(2)} Rs.',
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   Widget _buildButton(String text, Color color, VoidCallback onPressed) {
     return SizedBox(
       width: 100, // Fixed width for buttons
